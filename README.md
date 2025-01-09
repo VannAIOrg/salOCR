@@ -8,12 +8,6 @@ This project processes Hindi PDF files to extract text using Optical Character R
 2. The images are then binarized to improve text clarity.
 3. Text regions are detected, and text is extracted using `pytesseract`.
 
-## Image Processing Workflow
-Below is an illustration of how the system processes a sample PDF page:
-
-**Original Image | Binarized Image | Deskewed Image**
-![Image Processing Workflow](assets/SalOCR_Binarization.png)
-
 ## Example Usage
 To process PDF files stored in a folder:
 
@@ -22,6 +16,12 @@ To process PDF files stored in a folder:
    ```bash
    python main.py
    ```
+
+## Image Processing Workflow
+Below is an illustration of how the system processes a sample PDF page:
+
+**Original Image | Binarized Image | Deskewed Image**
+![Image Processing Workflow](assets/SalOCR_Binarization.png)
 
 ## Result of Processing `HindiBooks` Folder:
 - Average time taken to process each page: **~5 seconds**
