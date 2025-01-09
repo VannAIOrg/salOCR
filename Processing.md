@@ -1,7 +1,7 @@
 
-## Following is an example of the how the bulk.py file (in salOCR directory) processes the PDFs stored in a folder.
-## In this example, a folder called "HindiBooks" containing 20 hindi pdf files was stored in the salOCR directory 
-## The processing was initiated with : 
+# Following is an example of the how the bulk.py file (in salOCR directory) processes the PDFs stored in a folder.
+# In this example, a folder called "HindiBooks" containing 20 hindi pdf files was stored in the salOCR directory 
+# The processing was initiated with : 
     python main.py
 
 
@@ -17,12 +17,11 @@ TODO:
 4. Parallel processing to speed up the pdf to text conversion
 
 
-#___________________________________________________________________________________________________________________________________
-
+#_____________________________________________________________________________________
 Folder Name: HindiBooks (stored in salOCR directory)
 No. of PDFs = 20
 
-#___________________________________________________________________________________________________________________________________
+#_____________________________________________________________________________________
 
 Processing PDF 1 of 20: karmbhumi.pdf ## Slow processing 'cz computer was on sleep mode for almost 20-30 min
 Processing Pages for karmbhumi.pdf: 100%|███████████████████████████████████████████████████████████████████████████████████████| 279/279 [44:22<00:00,  9.54s/it]
@@ -71,4 +70,4 @@ Total PDFs processed: 20
 PDF Names: karmbhumi.pdf, daur-mamta-kalia.pdf, Ekgadhekivapsi-KrishnChandar.pdf, devdas-sharat.pdf, Juari The Gambler Dostoevsky.pdf, SambhogSeSmadhiKiAur.pdf, Durgeshnandini.pdf, nirmala.pdf, Anuradha.pdf, Ramji-Jaag-Utha.pdf, AnimalFarm.pdf, gaban.pdf, Aparadh-aur-dand-fyodor-dostoveyaski.hindibookspdf.com.pdf, aanandmath.pdf, sherlock.pdf, Grihdah.pdf, dukkham-sukkham-mamta-kalia.pdf, Manjhali Didi .pdf, Brahman Ki Beti.pdf, katra-dar-katra-sampurna.pdf
 Total word count: 1,296,897
 
-#___________________________________________________________________________________________________________________________________
+#_____________________________________________________________________________________
