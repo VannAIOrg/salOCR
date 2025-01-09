@@ -16,7 +16,7 @@ To process PDF files stored in a folder:
    ```bash
    python main.py
    ```
-
+   
 ## Image Processing Workflow
 Below is an illustration of how the system processes a sample PDF page:
 
@@ -33,11 +33,11 @@ During processing, text regions and lines are detected as shown below:
 ## Example Output
 Below is an example of the output text generated from an input PDF page:
 
-**Original Image | Output Text**
+Original Image | Output Text
 ![Output Example](assets/salOCR_output_text.png)
 
-# Initial Result of Processing 20 Hindi PDF files inside a folder:
-- Average time taken to process each page: **~5 seconds**
+Initial Result of Processing 20 Hindi PDF files inside a folder:
+- Average time taken to process each page: ~5 seconds
 - PDFs with only text showed the best results.
 - PDFs containing images or illustrations yielded poor results (#TODO).
 - Accuracy of text conversion was high (based on visual inspection; no quantitative analysis was performed).
