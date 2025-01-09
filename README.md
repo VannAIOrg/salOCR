@@ -23,11 +23,6 @@ Below is an illustration of how the system processes a sample PDF page:
 **Original Image | Binarized Image | Deskewed Image**
 ![Image Processing Workflow](assets/SalOCR_Binarization.png)
 
-## Result of Processing `HindiBooks` Folder:
-- Average time taken to process each page: **~5 seconds**
-- PDFs with only text showed the best results.
-- PDFs containing images or illustrations yielded poor results (#TODO).
-- Accuracy of text conversion was high (based on visual inspection; no quantitative analysis was performed).
 
 ## Text Detection
 During processing, text regions and lines are detected as shown below:
@@ -41,6 +36,11 @@ Below is an example of the output text generated from an input PDF page:
 **Original Image | Output Text**
 ![Output Example](assets/salOCR_output_text.png)
 
+# Initial Result of Processing 20 Hindi PDF files inside a folder:
+- Average time taken to process each page: **~5 seconds**
+- PDFs with only text showed the best results.
+- PDFs containing images or illustrations yielded poor results (#TODO).
+- Accuracy of text conversion was high (based on visual inspection; no quantitative analysis was performed).
 
 ## TODO List
 1. Improve OCR performance for PDFs containing images and illustrations.
