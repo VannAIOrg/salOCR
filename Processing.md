@@ -1,7 +1,7 @@
 
-# Following is an example of the how the bulk.py file (in salOCR directory) processes the PDFs stored in a folder.
-# In this example, a folder called "HindiBooks" containing 20 hindi pdf files was stored in the salOCR directory 
-# The processing was initiated with : 
+**Following is an example of the how the bulk.py file (in salOCR directory) processes the PDFs stored in a folder.
+In this example, a folder called "HindiBooks" containing 20 hindi pdf files was stored in the salOCR directory 
+The processing was initiated with : **
     python main.py
 
 
