@@ -1,0 +1,7 @@
+opencv-python
+numpy
+pytesseract
+pdf2image
+streamlit
+joblib
+tqdm
