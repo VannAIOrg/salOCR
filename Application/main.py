@@ -13,7 +13,7 @@ def main():
     total_pdfs = len(pdf_files)
 
     # Process PDFs in parallel
-    results = Parallel(n_jobs=-1)(
+    results = Parallel(n_jobs=1)(
         delayed(process_pdf)(pdf_path, image_utils, text_utils) for pdf_path in pdf_files
     )
 
