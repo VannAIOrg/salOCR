@@ -6,37 +6,10 @@ import pdf2image
 from image_utils import preprocess_image, find_large_contours, mask_large_areas, get_text_regions
 from text_utils import extract_text_from_regions
 
-def process_page(page_image, page_num):
-    """
-    Process a single page
-    
-    Args:
-        page_image (numpy.ndarray): Page image
-        page_num (int): Page number
-    
-    Returns:
-        dict: Processing results for the page
-    """
-    try:
-        # Process image
-        binary_image = preprocess_image(page_image)
-        large_contours = find_large_contours(binary_image)
-        masked_image = mask_large_areas(binary_image, large_contours)
-        
-        # Extract text regions
-        text_regions = get_text_regions(masked_image)
-        extracted_text = extract_text_from_regions(page_image, text_regions, language="hin")
-        
-        return {
-            'page_num': page_num,
-            'original_image': page_image,
-            'masked_image': masked_image,
-            'contours': large_contours,
-            'extracted_text': extracted_text
-        }
-    except Exception as e:
-        st.error(f"Error processing page {page_num}: {e}")
-        return None
+def extract_page(file_path, page_num, dpi=300):
+    """Extract a specific page from PDF"""
+    pages = pdf2image.convert_from_path(file_path, first_page=page_num, last_page=page_num, dpi=dpi, grayscale=True)
+    return np.array(pages[0])
 
 def draw_bounding_boxes(image, contours):
     """Draw bounding boxes on the image for detected contours"""
@@ -46,62 +19,58 @@ def draw_bounding_boxes(image, contours):
         cv2.rectangle(boxed_image, (x, y), (x+w, y+h), (0, 255, 0), 2)
     return boxed_image
 
-# Streamlit UI
-st.title("salOCR - Single-Page Hindi PDF Text Extraction")
+# Streamlit user interface
+st.title("salOCR - Hindi PDF Text Extraction")
+st.sidebar.header("Options")
 
 uploaded_file = st.file_uploader("Upload a PDF", type="pdf")
 
 if uploaded_file is not None:
-    # Save temporary file
+    # Save the uploaded file temporarily
     temp_dir = "temp"
     os.makedirs(temp_dir, exist_ok=True)
     file_path = os.path.join(temp_dir, uploaded_file.name)
     with open(file_path, "wb") as f:
         f.write(uploaded_file.getbuffer())
     
-    # Convert first PDF page to image
-    pages = pdf2image.convert_from_path(file_path, first_page=1, last_page=1)
-    if pages:
-        page_image = np.array(pages[0])
-        
-        # Process the first page
-        result = process_page(page_image, 1)
-        
-        if result:
-            st.subheader(f"Page 1 Results")
-            
-            col1, col2 = st.columns(2)
-            
-            # Original and Bounding Box Images
-            with col1:
-                st.image(result['original_image'], caption="Original Page 1", use_container_width=True)
-            with col2:
-                boxed_image = draw_bounding_boxes(result['original_image'], result['contours'])
-                st.image(boxed_image, caption="Detected Regions", use_container_width=True)
-            
-            # Masked Image
-            st.image(result['masked_image'], caption="Processed Image", use_container_width=True)
-            
-            # Extracted Text
-            st.text_area("Extracted Text", result['extracted_text'], height=200)
-            
-            # Download Option
-            st.download_button(
-                label="Download Extracted Text",
-                data=result['extracted_text'],
-                file_name=f"{uploaded_file.name}_page_1_text.txt",
-                mime="text/plain"
-            )
-            
-            # Clean temp files
-            os.remove(file_path)
-            for root, _, files in os.walk(temp_dir):
-                for file in files:
-                    os.remove(os.path.join(root, file))
-        else:
-            st.error("Failed to process the page.")
-    else:
-        st.error("No pages found in the PDF.")
-else:
-    st.info("Please upload a PDF file.")
-
+    # Determine total pages
+    pages = pdf2image.convert_from_path(file_path)
+    total_pages = len(pages)
+    
+    # Select Page for Processing
+    st.subheader("Select a Page to Process")
+    page_num = st.slider("Page Number", 1, total_pages, 1)
+    
+    # Extract specific page
+    page_image = extract_page(file_path, page_num)
+    
+    # Display Input Image
+    st.image(page_image, caption=f"Original Page {page_num}", use_container_width=True)
+    
+    # Process Image
+    st.subheader("Processing Image...")
+    binary_image = preprocess_image(page_image)
+    large_contours = find_large_contours(binary_image)
+    
+    # Draw bounding boxes on the original image
+    boxed_image = draw_bounding_boxes(page_image, large_contours)
+    st.image(boxed_image, caption="Detected Regions with Bounding Boxes", use_container_width=True)
+    
+    # Mask large areas
+    masked_image = mask_large_areas(binary_image, large_contours)
+    st.image(masked_image, caption="Processed Image", use_container_width=True)
+    
+    # Extract Text from Regions
+    st.subheader("Extracted Text")
+    text_regions = get_text_regions(masked_image)
+    extracted_text = extract_text_from_regions(page_image, text_regions, language="hin")
+    st.text_area("Extracted Text", extracted_text, height=300)
+    
+    # Save Results
+    if st.button("Save Extracted Text"):
+        output_dir = "output"
+        os.makedirs(output_dir, exist_ok=True)
+        output_path = os.path.join(output_dir, f"{uploaded_file.name}_page_{page_num}.txt")
+        with open(output_path, "w", encoding="utf-8") as text_file:
+            text_file.write(extracted_text)
+        st.success(f"Text saved successfully at {output_path}!")
