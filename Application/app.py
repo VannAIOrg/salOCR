@@ -29,7 +29,7 @@ if uploaded_file is not None:
     page_image = extract_page(file_path, page_num, dpi=dpi)
 
     # Display Input Image
-    st.image(page_image, caption=f"Original Page {page_num}", use_column_width=True)
+    st.image(page_image, caption=f"Original Page {page_num}", use_container_width=True)
 
     # Process Image
     st.subheader("Processing Image...")
@@ -38,7 +38,7 @@ if uploaded_file is not None:
     masked_image = mask_large_areas(binary_image, large_contours)
 
     # Display Processed Image
-    st.image(masked_image, caption="Processed Image", use_column_width=True)
+    st.image(masked_image, caption="Processed Image", use_container_width=True)
 
     # Extract Text
     st.subheader("Extracted Text")
