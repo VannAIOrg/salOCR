@@ -8,12 +8,8 @@ from text_utils import extract_text_from_regions
 
 def extract_page(file_path, page_num, dpi=300):
     """Extract a specific page from PDF"""
-    pages = pdf2image.convert_from_path(file_path, first_page=page_num, last_page=page_num, dpi=dpi)
-    image = np.array(pages[0])
-    # Convert to 3 channels if it's grayscale
-    if len(image.shape) == 2:
-        image = cv2.cvtColor(image, cv2.COLOR_GRAY2RGB)
-    return image
+    pages = pdf2image.convert_from_path(file_path, first_page=page_num, last_page=page_num, dpi=dpi, grayscale=True)
+    return np.array(pages[0])
 
 
 def draw_bounding_boxes(image, contours):
@@ -22,8 +18,6 @@ def draw_bounding_boxes(image, contours):
     for contour in contours:
         x, y, w, h = cv2.boundingRect(contour)
         cv2.rectangle(boxed_image, (x, y), (x+w, y+h), (0, 255, 0), 2)
-    # Convert BGR to RGB for Streamlit to display bounding boxes
-    boxed_image = cv2.cvtColor(boxed_image, cv2.COLOR_BGR2RGB)
     return boxed_image
 
 
