@@ -2,8 +2,14 @@ import cv2
 import numpy as np
 
 def preprocess_image(image):
-    _, binary_image = cv2.threshold(image, 127, 255, cv2.THRESH_BINARY_INV)
+    """Convert image to binary for contour detection."""
+    # Convert to grayscale if the image is not already
+    if len(image.shape) == 3:
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    # Apply binary thresholding
+    _, binary_image = cv2.threshold(image, 127, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
     return binary_image
+
 
 def find_large_contours(image, min_area=10000):
     contours, _ = cv2.findContours(image, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
