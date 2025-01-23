@@ -45,7 +45,7 @@ if uploaded_file is not None:
     page_image = extract_page(file_path, page_num)
     
     # Display Input Image
-    st.image(page_image, caption=f"Original Page {page_num}", use_container_width=True)
+    st.image(page_image, caption=f"Original Page {page_num}", use_container_width=True,height=200)
     
     # Process Image
     st.subheader("Processing Image...")
