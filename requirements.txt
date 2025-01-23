@@ -5,5 +5,3 @@ pdf2image
 streamlit
 joblib
 tqdm
-tesseract-ocr
-tesseract-ocr-hin
