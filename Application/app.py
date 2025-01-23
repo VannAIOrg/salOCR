@@ -3,15 +3,12 @@ import numpy as np
 import cv2
 import os
 import pdf2image
-import concurrent.futures
-from functools import partial
-
 from image_utils import preprocess_image, find_large_contours, mask_large_areas, get_text_regions
 from text_utils import extract_text_from_regions
 
 def process_page(page_image, page_num):
     """
-    Process a single page with concurrent execution
+    Process a single page
     
     Args:
         page_image (numpy.ndarray): Page image
@@ -50,7 +47,7 @@ def draw_bounding_boxes(image, contours):
     return boxed_image
 
 # Streamlit UI
-st.title("salOCR - Multi-Page Hindi PDF Text Extraction")
+st.title("salOCR - Single-Page Hindi PDF Text Extraction")
 
 uploaded_file = st.file_uploader("Upload a PDF", type="pdf")
 
@@ -62,55 +59,41 @@ if uploaded_file is not None:
     with open(file_path, "wb") as f:
         f.write(uploaded_file.getbuffer())
     
-    # Convert PDF pages to images
-    pages = pdf2image.convert_from_path(file_path)
-    total_pages = len(pages)
-    
-    # Parallel page processing
-    with st.spinner(f'Processing {total_pages} pages...'):
-        with concurrent.futures.ThreadPoolExecutor() as executor:
-            process_func = partial(process_page)
-            results = list(executor.map(process_func, 
-                                        [np.array(page) for page in pages], 
-                                        range(1, total_pages + 1)))
-    
-    # Filter out None results
-    results = [r for r in results if r is not None]
-    
-    # Display results
-    for result in results:
-        st.subheader(f"Page {result['page_num']}")
+    # Convert first PDF page to image
+    pages = pdf2image.convert_from_path(file_path, first_page=1, last_page=1)
+    if pages:
+        page_image = np.array(pages[0])
         
-        # Original Image
-        st.image(result['original_image'], 
-                 caption=f"Original Page {result['page_num']}", 
-                 use_container_width=True)
+        # Process the first page
+        result = process_page(page_image, 1)
         
-        # Bounding Boxes
-        boxed_image = draw_bounding_boxes(result['original_image'], result['contours'])
-        st.image(boxed_image, 
-                 caption=f"Page {result['page_num']} - Detected Regions", 
-                 use_container_width=True)
-        
-        # Masked Image
-        st.image(result['masked_image'], 
-                 caption=f"Page {result['page_num']} - Processed Image", 
-                 use_container_width=True)
-        
-        # Extracted Text
-        st.text_area(f"Page {result['page_num']} - Extracted Text", 
-                     result['extracted_text'], 
-                     height=200)
-    
-    # Option to save all extracted text
-    if st.button("Save All Extracted Text"):
-        output_dir = "output"
-        os.makedirs(output_dir, exist_ok=True)
-        output_path = os.path.join(output_dir, f"{uploaded_file.name}_extracted_text.txt")
-        
-        with open(output_path, "w", encoding="utf-8") as text_file:
-            for result in results:
-                text_file.write(f"--- Page {result['page_num']} ---\n")
-                text_file.write(result['extracted_text'] + "\n\n")
-        
-        st.success(f"Text saved successfully at {output_path}!")
+        if result:
+            st.subheader(f"Page 1 Results")
+            
+            # Original Image
+            st.image(result['original_image'], caption="Original Page 1", use_container_width=True)
+            
+            # Bounding Boxes
+            boxed_image = draw_bounding_boxes(result['original_image'], result['contours'])
+            st.image(boxed_image, caption="Detected Regions", use_container_width=True)
+            
+            # Masked Image
+            st.image(result['masked_image'], caption="Processed Image", use_container_width=True)
+            
+            # Extracted Text
+            st.text_area("Extracted Text", result['extracted_text'], height=200)
+            
+            # Download Option
+            if st.button("Download Extracted Text"):
+                output_dir = "output"
+                os.makedirs(output_dir, exist_ok=True)
+                output_path = os.path.join(output_dir, f"{uploaded_file.name}_page_1_text.txt")
+                with open(output_path, "w", encoding="utf-8") as text_file:
+                    text_file.write(result['extracted_text'])
+                st.success(f"Text saved successfully at {output_path}!")
+        else:
+            st.error("Failed to process the page.")
+    else:
+        st.error("No pages found in the PDF.")
+else:
+    st.info("Please upload a PDF file.")
