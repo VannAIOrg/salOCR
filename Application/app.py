@@ -11,7 +11,6 @@ def extract_page(file_path, page_num, dpi=300):
     pages = pdf2image.convert_from_path(file_path, first_page=page_num, last_page=page_num, dpi=dpi, grayscale=True)
     return np.array(pages[0])
 
-
 def draw_bounding_boxes(image, contours):
     """Draw bounding boxes on the image for detected contours"""
     boxed_image = image.copy()
@@ -19,7 +18,6 @@ def draw_bounding_boxes(image, contours):
         x, y, w, h = cv2.boundingRect(contour)
         cv2.rectangle(boxed_image, (x, y), (x+w, y+h), (0, 255, 0), 2)
     return boxed_image
-
 
 # Streamlit user interface
 st.title("salOCR - Hindi PDF Text Extraction")
