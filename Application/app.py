@@ -37,35 +37,10 @@ if uploaded_file is not None:
     pages = pdf2image.convert_from_path(file_path)
     total_pages = len(pages)
     
-    # Page Selection Options
-    st.subheader("Page Selection")
-    page_selection_option = st.radio(
-        "Select Pages to Process", 
-        ["All Pages", "Specific Page Range", "Individual Pages"]
-    )
-    # Page selection based on chosen option
-    selected_pages = []
-    if page_selection_option == "All Pages":
-        selected_pages = list(range(1, total_pages + 1))
-    elif page_selection_option == "Specific Page Range":
-        start_page = st.number_input("Start Page", min_value=1, max_value=total_pages, value=1)
-        end_page = st.number_input("End Page", min_value=start_page, max_value=total_pages, value=total_pages)
-        selected_pages = list(range(start_page, end_page + 1))
-    elif page_selection_option == "Individual Pages":
-        selected_pages = st.multiselect(
-            "Choose specific pages", 
-            options=list(range(1, total_pages + 1))
-        )
-        # Process selected pages
-    if selected_pages:
-        # Parallel page processing
-        with st.spinner(f'Processing {len(selected_pages)} pages...'):
-            with concurrent.futures.ThreadPoolExecutor() as executor:
-                process_func = partial(process_page)
-                results = list(executor.map(process_func, 
-                                            [np.array(pages[page-1]) for page in selected_pages], 
-                                            selected_pages))
-        
+       # Select Page for Processing
+    st.subheader("Select a Page to Process")
+    page_num = st.slider("Page Number", 1, total_pages, 1)
+          
         # Filter out None results
         results = [r for r in results if r is not None]
         
