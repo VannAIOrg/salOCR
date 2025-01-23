@@ -9,7 +9,7 @@ from text_utils import extract_text_from_regions
 # Streamlit I user interface
 st.title("salOCR - Hindi PDF Text Extraction")
 st.sidebar.header("Options")
-dpi = st.sidebar.slider("PDF DPI", 100, 600, 300, step=50)
+
 
 uploaded_file = st.file_uploader("Upload a PDF", type="pdf")
 
