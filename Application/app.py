@@ -20,8 +20,8 @@ def draw_bounding_boxes(image, contours):
     return boxed_image
 
 # Streamlit user interface
-st.title("salOCR - Hindi PDF Text Extraction")
-st.sidebar.header("Options")
+st.title("salOCR ")
+st.write("Hindi PDF Text Extraction tool")
 
 uploaded_file = st.file_uploader("Upload a PDF", type="pdf")
 
