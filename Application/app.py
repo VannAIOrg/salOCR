@@ -70,12 +70,14 @@ if uploaded_file is not None:
         if result:
             st.subheader(f"Page 1 Results")
             
-            # Original Image
-            st.image(result['original_image'], caption="Original Page 1", use_container_width=True)
+            col1, col2 = st.columns(2)
             
-            # Bounding Boxes
-            boxed_image = draw_bounding_boxes(result['original_image'], result['contours'])
-            st.image(boxed_image, caption="Detected Regions", use_container_width=True)
+            # Original and Bounding Box Images
+            with col1:
+                st.image(result['original_image'], caption="Original Page 1", use_container_width=True)
+            with col2:
+                boxed_image = draw_bounding_boxes(result['original_image'], result['contours'])
+                st.image(boxed_image, caption="Detected Regions", use_container_width=True)
             
             # Masked Image
             st.image(result['masked_image'], caption="Processed Image", use_container_width=True)
@@ -84,16 +86,22 @@ if uploaded_file is not None:
             st.text_area("Extracted Text", result['extracted_text'], height=200)
             
             # Download Option
-            if st.button("Download Extracted Text"):
-                output_dir = "output"
-                os.makedirs(output_dir, exist_ok=True)
-                output_path = os.path.join(output_dir, f"{uploaded_file.name}_page_1_text.txt")
-                with open(output_path, "w", encoding="utf-8") as text_file:
-                    text_file.write(result['extracted_text'])
-                st.success(f"Text saved successfully at {output_path}!")
+            st.download_button(
+                label="Download Extracted Text",
+                data=result['extracted_text'],
+                file_name=f"{uploaded_file.name}_page_1_text.txt",
+                mime="text/plain"
+            )
+            
+            # Clean temp files
+            os.remove(file_path)
+            for root, _, files in os.walk(temp_dir):
+                for file in files:
+                    os.remove(os.path.join(root, file))
         else:
             st.error("Failed to process the page.")
     else:
         st.error("No pages found in the PDF.")
 else:
     st.info("Please upload a PDF file.")
+
