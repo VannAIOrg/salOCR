@@ -17,7 +17,10 @@ def draw_bounding_boxes(image, contours):
     for contour in contours:
         x, y, w, h = cv2.boundingRect(contour)
         cv2.rectangle(boxed_image, (x, y), (x+w, y+h), (0, 255, 0), 2)
+    # Convert BGR to RGB for Streamlit to display bounding boxes
+    boxed_image = cv2.cvtColor(boxed_image, cv2.COLOR_BGR2RGB)
     return boxed_image
+
 
 # Streamlit user interface
 st.title("salOCR - Hindi PDF Text Extraction")
