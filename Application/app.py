@@ -56,7 +56,58 @@ if uploaded_file is not None:
             "Choose specific pages", 
             options=list(range(1, total_pages + 1))
         )
-    
+        # Process selected pages
+    if selected_pages:
+        # Parallel page processing
+        with st.spinner(f'Processing {len(selected_pages)} pages...'):
+            with concurrent.futures.ThreadPoolExecutor() as executor:
+                process_func = partial(process_page)
+                results = list(executor.map(process_func, 
+                                            [np.array(pages[page-1]) for page in selected_pages], 
+                                            selected_pages))
+        
+        # Filter out None results
+        results = [r for r in results if r is not None]
+        
+        # Display results
+        for result in results:
+            st.subheader(f"Page {result['page_num']}")
+            
+            # Original Image
+            st.image(result['original_image'], 
+                     caption=f"Original Page {result['page_num']}", 
+                     use_container_width=True)
+            
+            # Bounding Boxes
+            boxed_image = draw_bounding_boxes(result['original_image'], result['contours'])
+            st.image(boxed_image, 
+                     caption=f"Page {result['page_num']} - Detected Regions", 
+                     use_container_width=True)
+            
+            # Masked Image
+            st.image(result['masked_image'], 
+                     caption=f"Page {result['page_num']} - Processed Image", 
+                     use_container_width=True)
+            
+            # Extracted Text
+            st.text_area(f"Page {result['page_num']} - Extracted Text", 
+                         result['extracted_text'], 
+                         height=200)
+        
+        # Option to save all extracted text
+        if st.button("Save All Extracted Text"):
+            output_dir = "output"
+            os.makedirs(output_dir, exist_ok=True)
+            output_path = os.path.join(output_dir, f"{uploaded_file.name}_extracted_text.txt")
+            
+            with open(output_path, "w", encoding="utf-8") as text_file:
+                for result in results:
+                    text_file.write(f"--- Page {result['page_num']} ---\n")
+                    text_file.write(result['extracted_text'] + "\n\n")
+            
+            st.success(f"Text saved successfully at {output_path}!")
+    else:
+        st.warning("Please select at least one page to process.")
     # Extract specific page
     page_image = extract_page(file_path, page_num)
     
