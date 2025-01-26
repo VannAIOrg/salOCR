@@ -30,10 +30,10 @@ The [website](https://salocr.streamlit.app/)
 
 ## Example output
 
-![example page2 jpg](https://github.com/user-attachments/assets/841eeafa-2569-46a7-ab8c-eee8058d46db)
-![example page2(Boxed)](https://github.com/user-attachments/assets/29eefee0-c68b-4323-b0ec-cb7e587c4d67)
-![Uploading binary.jpg…]()
+![input image](https://github.com/user-attachments/assets/183ce0bc-5eb0-4eb9-a75f-ec772ae4fce3)
 
+![readme-boxed](https://github.com/user-attachments/assets/b7b399c3-dd79-46ab-9f9f-3c71e44703cb)
+![binary](https://github.com/user-attachments/assets/9a2f307a-e895-4470-9d30-1248378c72e5)
 
 ## Installation
 ```bash
