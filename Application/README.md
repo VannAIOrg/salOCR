@@ -1,6 +1,7 @@
 # salOCR: Hindi PDF Text Extraction  web Application
 This is a proof of concept web application for the [salOCR](https://github.com/VannAIOrg/salOCR) repository.
 
+The [website](https://salocr.streamlit.app/)
 ## Key Additions in Streamlit Application
 
 ### Major updates
