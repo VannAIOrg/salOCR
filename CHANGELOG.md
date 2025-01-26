@@ -16,3 +16,19 @@
 
 **Removed**
 - Progress bar (`tqdm`) was excluded from `main_parallel.py` since it does not align with parallelized operations.
+
+**Changelog**
+
+[released on 21st Jan 2025]
+
+**Added** 
+- **Application** folder which contains the segregated utilities from `main_parallel.py` for the streamlit Application.
+- Added files such as `text_utils.py`,`image_utils.py` and `pdf_utils.py` for modularity and control over the functions.
+- core functionality remains the same, with the addition of a `app.py` for the app interface.
+- `setup.py` and `requirements.py` files required for the application.
+
+
+[released on 26st Jan 2025]
+
+**Added**
+- `README.md` file under `Application`.
