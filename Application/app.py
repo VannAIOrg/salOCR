@@ -69,7 +69,7 @@ def main():
             for i, contour in enumerate(large_contours):
                 x, y, w, h = cv2.boundingRect(contour)
                 region = page_image[y:y + h, x:x + w]
-                text = pytesseract.image_to_string(region, config='--psm 6',lan='hin')
+                text = pytesseract.image_to_string(region, config='--psm 6',lang='hin')
                 ocr_results.append(f"Region {i + 1}: {text.strip()}")
 
             # Store data for the page
