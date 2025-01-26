@@ -28,9 +28,9 @@ def extract_text_from_contours(image, contours,language='hin'):
     return extracted_texts
 
 def main():
-    st.title("salOCR - Debugging Contours")
+    st.title("salOCR - For Hindi PDFs")
 
-    uploaded_file = st.file_uploader("Upload a PDF", type="pdf")
+    uploaded_file = st.file_uploader("Upload your PDF(s)", type="pdf")
 
     if uploaded_file is not None:
         # Save the uploaded file temporarily
@@ -87,11 +87,10 @@ def main():
 
         col1, col2, col3 = st.columns(3)
         with col1:
-            st.image(first_page_data["binary_image"], caption="Binary Image (Page 1)", use_container_width=True, clamp=True)
+            st.image(first_page_data["binary_image"], caption="Binary Image of Page 1", use_container_width=False,width=400, clamp=True)
         with col2:
-            st.image(first_page_data["image_with_contours"], caption="Contours on Original Image (Page 1)", use_container_width=True)
-        with col3:
-            st.image(first_page_data["masked_image"], caption="Masked Image (Page 1)", use_container_width=True)
+            st.image(first_page_data["image_with_contours"], caption="Contours drawn on Page 1", use_container_width=False,width=400)
+
 
         # Display OCR results for all pages
         st.subheader("OCR Results for All Pages")
