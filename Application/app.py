@@ -5,6 +5,7 @@ import os
 import streamlit as st
 from image_utils import preprocess_image, find_large_contours, mask_large_areas
 import pytesseract
+import io  # For file download
 
 def extract_page(file_path, page_num, dpi=300):
     """Extract a specific page from PDF."""
@@ -17,13 +18,13 @@ def draw_contours(image, contours):
     cv2.drawContours(image_with_contours, contours, -1, (0, 255, 0), 2)
     return image_with_contours
 
-def extract_text_from_contours(image, contours,language='hin'):
+def extract_text_from_contours(image, contours, language='hin'):
     """Extract text from each contour region."""
     extracted_texts = []
     for i, contour in enumerate(contours):
         x, y, w, h = cv2.boundingRect(contour)
         region = image[y:y+h, x:x+w]
-        text = pytesseract.image_to_string(region, config='--psm 6',lang=language)
+        text = pytesseract.image_to_string(region, config='--psm 6', lang=language)
         extracted_texts.append((f"Region {i+1}", text.strip()))
     return extracted_texts
 
@@ -69,7 +70,7 @@ def main():
             for i, contour in enumerate(large_contours):
                 x, y, w, h = cv2.boundingRect(contour)
                 region = page_image[y:y + h, x:x + w]
-                text = pytesseract.image_to_string(region, config='--psm 6',lang='hin')
+                text = pytesseract.image_to_string(region, config='--psm 6', lang='hin')
                 ocr_results.append(f"Region {i + 1}: {text.strip()}")
 
             # Store data for the page
@@ -87,10 +88,9 @@ def main():
 
         col1, col2, col3 = st.columns(3)
         with col1:
-            st.image(first_page_data["binary_image"], caption="Binary Image of Page 1", use_container_width=False,width=400, clamp=True)
+            st.image(first_page_data["binary_image"], caption="Binary Image of Page 1", use_container_width=False, width=400, clamp=True)
         with col2:
-            st.image(first_page_data["image_with_contours"], caption="Contours drawn on Page 1", use_container_width=False,width=400)
-
+            st.image(first_page_data["image_with_contours"], caption="Contours drawn on Page 1", use_container_width=False, width=400)
 
         # Display OCR results for all pages
         st.subheader("OCR Results for All Pages")
@@ -99,6 +99,26 @@ def main():
                 for result in page["ocr_results"]:
                     st.write(result)
 
+        # Consolidated OCR Results Section
+        st.subheader("Consolidated OCR Results")
+        consolidated_output = []
+        for page in page_data:
+            consolidated_output.append(f"Page {page['page_num']}:\n")
+            for result in page["ocr_results"]:
+                consolidated_output.append(f"  {result}\n")
+            consolidated_output.append("\n")
+
+        # Display all results in a single text area
+        full_text_output = "".join(consolidated_output)
+        st.text_area("Extracted Text", full_text_output, height=300)
+
+        # Add a download button
+        st.download_button(
+            label="Download Extracted Text",
+            data=io.StringIO(full_text_output).getvalue(),
+            file_name="extracted_text.txt",
+            mime="text/plain",
+        )
 
 if __name__ == "__main__":
     main()
