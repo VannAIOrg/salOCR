@@ -17,13 +17,13 @@ def draw_contours(image, contours):
     cv2.drawContours(image_with_contours, contours, -1, (0, 255, 0), 2)
     return image_with_contours
 
-def extract_text_from_contours(image, contours):
+def extract_text_from_contours(image, contours,language='hin'):
     """Extract text from each contour region."""
     extracted_texts = []
     for i, contour in enumerate(contours):
         x, y, w, h = cv2.boundingRect(contour)
         region = image[y:y+h, x:x+w]
-        text = pytesseract.image_to_string(region, config='--psm 6')
+        text = pytesseract.image_to_string(region, config='--psm 6',lang=language)
         extracted_texts.append((f"Region {i+1}", text.strip()))
     return extracted_texts
 
