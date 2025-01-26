@@ -39,12 +39,12 @@ def main():
 
         # Extract specific page
         page_image = extract_page(file_path, page_num)
-        st.image(page_image, caption=f"Original Page {page_num}", use_container_width=False, width=200)
+        st.image(page_image, caption=f"Original Page {page_num}", use_container_width=False, width=300)
 
         # Process Image
         st.subheader("Processing Image...")
         binary_image = preprocess_image(page_image)
-        st.image(binary_image, caption="Binary Image (Preprocessed)", use_container_width=False,width=200, clamp=True)
+        st.image(binary_image, caption="Binary Image (Preprocessed)", use_container_width=False,width=300, clamp=True)
 
         # Find and visualize large contours
         min_area = st.sidebar.slider("Minimum Contour Area", 5000, 50000, 10000, step=1000)
@@ -56,11 +56,11 @@ def main():
         large_contours = find_large_contours(closed_image, min_area)
 
         image_with_contours = draw_contours(page_image, large_contours)
-        st.image(image_with_contours, caption="Contours on Original Image", use_container_width=False,width=200)
+        st.image(image_with_contours, caption="Contours on Original Image", use_container_width=False,width=300)
 
         # Mask large areas and visualize
         masked_image = mask_large_areas(page_image, large_contours)
-        st.image(masked_image, caption="Masked Image", use_container_width=True, clamp=True)
+        st.image(masked_image, caption="Masked Image", use_container_width=False,width=300, clamp=True)
 
         # Debug Output
         st.subheader("Debugging Output")
