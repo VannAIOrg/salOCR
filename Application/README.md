@@ -28,6 +28,13 @@ The [website](https://salocr.streamlit.app/)
 - Exports extracted text
 - Uses Pytesseract for Hindi OCR
 
+## Example output
+
+![example page2 jpg](https://github.com/user-attachments/assets/841eeafa-2569-46a7-ab8c-eee8058d46db)
+![example page2(Boxed)](https://github.com/user-attachments/assets/29eefee0-c68b-4323-b0ec-cb7e587c4d67)
+![Uploading binary.jpg…]()
+
+
 ## Installation
 ```bash
 pip install streamlit opencv-python pytesseract pdf2image
