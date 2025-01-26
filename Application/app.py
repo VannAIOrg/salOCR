@@ -59,7 +59,7 @@ def main():
         st.image(image_with_contours, caption="Contours on Original Image", use_container_width=True)
 
         # Mask large areas and visualize
-        masked_image = mask_large_areas(binary_image, large_contours)
+        masked_image = mask_large_areas(page_image, large_contours)
         st.image(masked_image, caption="Masked Image", use_container_width=True, clamp=True)
 
         # Debug Output
