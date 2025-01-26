@@ -40,57 +40,66 @@ def main():
         with open(file_path, "wb") as f:
             f.write(uploaded_file.getbuffer())
 
-        # Determine total pages
+        # Extract all pages
         pages = pdf2image.convert_from_path(file_path)
         total_pages = len(pages)
 
-        # Select Page for Processing
-        st.subheader("Select a Page to Process")
-        page_num = st.slider("Page Number", 1, total_pages, 1)
+        st.write(f"Total Pages in PDF: {total_pages}")
+        page_data = []
 
-        # Extract specific page
-        page_image = extract_page(file_path, page_num)
-        st.image(page_image, caption=f"Original Page {page_num}", use_container_width=True)
+        # Process all pages
+        for page_num in range(1, total_pages + 1):
+            page_image = extract_page(file_path, page_num)
+            binary_image = preprocess_image(page_image)
 
-        # Process Image
-        st.subheader("Processing Image...")
-        binary_image = preprocess_image(page_image)
+            # Kernel parameters
+            kernel_width = 50
+            kernel_height = 100
+            kernel = np.ones((kernel_height, kernel_width), np.uint8)
+            closed_image = cv2.morphologyEx(binary_image, cv2.MORPH_CLOSE, kernel)
 
-        # Kernel parameters fixed
-        kernel_width = 50
-        kernel_height = 100
-        kernel = np.ones((kernel_height, kernel_width), np.uint8)
-        
-        closed_image = cv2.morphologyEx(binary_image, cv2.MORPH_CLOSE, kernel)
+            # Find contours and extract OCR
+            min_area = 10000  # Fixed or adjustable
+            large_contours = find_large_contours(closed_image, min_area)
+            image_with_contours = draw_contours(page_image, large_contours)
+            masked_image = mask_large_areas(binary_image, large_contours)
 
-        # Find and visualize large contours
-        min_area = st.sidebar.slider("Minimum Contour Area", 5000, 50000, 10000, step=1000)
-        large_contours = find_large_contours(closed_image, min_area)
+            # OCR for each contour
+            ocr_results = []
+            for i, contour in enumerate(large_contours):
+                x, y, w, h = cv2.boundingRect(contour)
+                region = page_image[y:y + h, x:x + w]
+                text = pytesseract.image_to_string(region, config='--psm 6')
+                ocr_results.append(f"Region {i + 1}: {text.strip()}")
 
-        image_with_contours = draw_contours(page_image, large_contours)
-        masked_image = mask_large_areas(binary_image, large_contours)
+            # Store data for the page
+            page_data.append({
+                "page_num": page_num,
+                "binary_image": binary_image,
+                "image_with_contours": image_with_contours,
+                "masked_image": masked_image,
+                "ocr_results": ocr_results,
+            })
 
-        # Display images side by side
-        st.subheader("Processed Images")
+        # Display processed images for the first page
+        st.subheader("Processed Images (First Page)")
+        first_page_data = page_data[0]
+
         col1, col2, col3 = st.columns(3)
-
         with col1:
-            st.image(binary_image, caption="Binary Image", use_container_width=True, clamp=True)
+            st.image(first_page_data["binary_image"], caption="Binary Image (Page 1)", use_container_width=True, clamp=True)
         with col2:
-            st.image(image_with_contours, caption="Contours on Original Image", use_container_width=True)
+            st.image(first_page_data["image_with_contours"], caption="Contours on Original Image (Page 1)", use_container_width=True)
         with col3:
-            st.image(masked_image, caption="Masked Image", use_container_width=True, clamp=True)
+            st.image(first_page_data["masked_image"], caption="Masked Image (Page 1)", use_container_width=True)
 
-        # Extract and Display OCR Results for each contour
-        st.subheader("OCR Results")
-        ocr_results = extract_text_from_contours(page_image, large_contours)
-        for region_name, text in ocr_results:
-            st.write(f"**{region_name}:**")
-            st.text_area("Extracted Text", text, height=100)
+        # Display OCR results for all pages
+        st.subheader("OCR Results for All Pages")
+        for page in page_data:
+            with st.expander(f"Page {page['page_num']} OCR Results"):
+                for result in page["ocr_results"]:
+                    st.write(result)
 
-        # Debug Output
-        st.subheader("Debugging Output")
-        st.write(f"Number of Contours Found: {len(large_contours)}")
 
 if __name__ == "__main__":
     main()
